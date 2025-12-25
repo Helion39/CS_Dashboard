@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vastel CS Operations Center</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="login-logo">
+                <div class="login-logo-icon">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">support_agent</span>
+                </div>
+                <span class="login-logo-text">HelpDesk</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Sign in to access CS Operations Center</p>
+
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <label class="input-label" for="email">Email</label>
+                    <div style="position: relative;">
+                        <span class="material-symbols-outlined input-icon" style="font-size: 20px;">mail</span>
+                        <input type="email" id="email" class="input input-lg input-with-icon"
+                            placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="password">Password</label>
+                    <div style="position: relative;">
+                        <span class="material-symbols-outlined input-icon" style="font-size: 20px;">lock</span>
+                        <input type="password" id="password" class="input input-lg input-with-icon"
+                            placeholder="Enter your password" required>
+                        <button type="button" id="togglePassword"
+                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--color-text-muted);">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between" style="margin-top: var(--spacing-2);">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="remember"
+                            style="width: 16px; height: 16px; accent-color: var(--color-primary);">
+                        <span class="text-sm text-secondary">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm" style="color: var(--color-primary); font-weight: 600;">Forgot
+                        password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top: var(--spacing-4);">
+                    <span>Sign In</span>
+                    <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p>Vastel Secure CS Operations Center</p>
+                <p style="margin-top: var(--spacing-1);">© 2024 Vastel. Internal Use Only.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            const icon = this.querySelector('.material-symbols-outlined');
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+
+        // Form submission (demo)
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Demo: redirect based on email
+            // In production, this would be handled by backend authentication
+            if (email.includes('admin')) {
+                window.location.href = 'admin-dashboard.html';
+            } else if (email.includes('himari') || email.includes('junior')) {
+                window.location.href = 'dashboard-junior.html';
+            } else if (email.includes('jay') || email.includes('senior')) {
+                window.location.href = 'dashboard-senior.html';
+            } else if (email.includes('it') || email.includes('budi') || email.includes('support')) {
+                window.location.href = 'dashboard-it.html';
+            } else {
+                window.location.href = 'dashboard-junior.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

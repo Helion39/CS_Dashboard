@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Senior CS Operations Dashboard - Twisty Style</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#EB4C36",
+                        "primary-dark": "#d13a25",
+                        "accent-red": "#FEE2E2",
+                        "accent-red-text": "#EF4444",
+                        "page-bg": "#F3F4F6",
+                        "card-bg": "#FFFFFF",
+                        "text-main": "#1e293b",
+                        "text-secondary": "#64748b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "2xl": "1.25rem",
+                        "3xl": "2rem",
+                        "4xl": "2.5rem",
+                    },
+                    boxShadow: {
+                        "soft": "0 10px 40px -10px rgba(0,0,0,0.05)",
+                        "card": "0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
+        }
+
+        .chat-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-page-bg text-text-main overflow-hidden h-screen flex p-6 gap-6">
+    <!-- Sidebar -->
+    <div class="w-64 flex-shrink-0 flex flex-col h-full bg-transparent">
+        <div class="h-16 flex items-center px-2 mb-8">
+            <div class="flex items-center gap-3">
+                <div
+                    class="size-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/30">
+                    <span class="material-symbols-outlined text-2xl">support_agent</span>
+                </div>
+                <h1 class="text-slate-900 text-xl font-bold tracking-tight">HelpDesk</h1>
+            </div>
+        </div>
+        <div class="flex-1 space-y-2">
+            <a class="flex items-center gap-4 px-4 py-3 rounded-full bg-white text-slate-900 shadow-soft transition-all"
+                href="dashboard-senior.html">
+                <span class="material-symbols-outlined text-primary text-2xl"
+                    style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                <span class="text-base font-bold">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-4 px-4 py-3 rounded-full text-slate-500 hover:text-slate-900 hover:bg-white/50 transition-all group"
+                href="senior-tickets.html">
+                <span class="material-symbols-outlined text-2xl">confirmation_number</span>
+                <span class="text-base font-semibold">Tickets</span>
+            </a>
+            <a class="flex items-center gap-4 px-4 py-3 rounded-full text-slate-500 hover:text-slate-900 hover:bg-white/50 transition-all group"
+                href="senior-reports.html">
+                <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                <span class="text-base font-semibold">Reports</span>
+            </a>
+            <a class="flex items-center gap-4 px-4 py-3 rounded-full text-slate-500 hover:text-slate-900 hover:bg-white/50 transition-all group"
+                href="history.html#senior">
+                <span class="material-symbols-outlined text-2xl">history</span>
+                <span class="text-base font-semibold">History</span>
+            </a>
+        </div>
+        <div class="mt-auto">
+            <div
+                class="flex items-center gap-3 p-2 pr-4 bg-white rounded-full shadow-soft cursor-pointer transition-transform hover:scale-[1.02]">
+                <div class="size-10 rounded-full bg-cover bg-center"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAoS1f1jqiPLCv9wP1ZX5ODYa0ghkKGjzT0pHb0bhhH20OWJucjJF3IaQ3_s7kGdgzSrESvLELeRePVCXvRr6Yy6B44ot4XYOMJ8EMZqG-XCW3_LdyPn99i7jvXqfWcPrKLwpHBNINwHk8ii2yZhCVjb4ie45MSAzkKY1ThrKQqU6IW1IYNMpiJCMbLekMBKotxWueVnTbLJwOjHjthhnsBYumDmvRUF1jRAc8enpPdmTnLWmqaUL-YtKY7AbgW3bg6V9BjT3ZcykA');">
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-sm font-bold text-slate-900 leading-tight">Jay Won</p>
+                    <p class="text-[10px] text-slate-500 font-medium">Senior CS Agent</p>
+                </div>
+                <span class="material-symbols-outlined text-slate-400 text-lg ml-auto cursor-pointer hover:text-primary"
+                    onclick="window.location.href='login.html'">logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col gap-4 h-full overflow-hidden">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Welcome back, Jay Won! 👋</h1>
+                <p class="text-sm text-slate-500 mt-1">Here's your performance summary</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-slate-500">Dec 25, 2024</span>
+            </div>
+        </div>
+
+        <div class="flex-1 flex gap-6 overflow-hidden">
+            <!-- Left Panel -->
+            <div class="flex-[2] flex flex-col gap-6 min-w-0 h-full">
+                <!-- Score Card -->
+                <div class="bg-gradient-to-br from-primary to-primary-dark rounded-[2rem] shadow-soft p-6 text-white">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <p class="text-sm font-semibold opacity-90">Halo Jay Won,</p>
+                            <p class="text-xs opacity-70">Sisa Poin Bulan Ini:</p>
+                        </div>
+                        <span class="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full">December 2024</span>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <span class="text-5xl font-extrabold">95</span>
+                        <span class="text-2xl font-bold opacity-70 mb-1">/100</span>
+                    </div>
+                    <p class="text-sm opacity-80 mt-2">🎯 Great job! You're on track this month.</p>
+                </div>
+
+                <!-- Ticket Stats -->
+                <div class="flex gap-4">
+                    <div class="flex-1 bg-white rounded-2xl p-4 shadow-soft border-2 border-red-500">
+                        <p class="text-3xl font-extrabold text-red-500">2</p>
+                        <p class="text-xs text-slate-500 mt-1">High Priority</p>
+                    </div>
+                    <div class="flex-1 bg-white rounded-2xl p-4 shadow-soft">
+                        <p class="text-3xl font-extrabold text-amber-500">5</p>
+                        <p class="text-xs text-slate-500 mt-1">Medium</p>
+                    </div>
+                    <div class="flex-1 bg-white rounded-2xl p-4 shadow-soft">
+                        <p class="text-3xl font-extrabold text-blue-500">10</p>
+                        <p class="text-xs text-slate-500 mt-1">Low</p>
+                    </div>
+                </div>
+
+                <!-- Ticket Queue -->
+                <div class="bg-white rounded-[2rem] shadow-soft flex flex-col flex-1 overflow-hidden min-h-0">
+                    <div class="px-8 py-5 flex items-center justify-between border-b border-slate-50">
+                        <h2 class="text-base font-bold text-slate-900">Active Tickets</h2>
+                        <button class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <span class="material-symbols-outlined text-xl">sort</span>
+                        </button>
+                    </div>
+                    <div class="overflow-y-auto px-6 py-4 space-y-3 no-scrollbar flex-1">
+                        <!-- Ticket 1 - SELECTED -->
+                        <div
+                            class="p-5 rounded-2xl bg-white border border-slate-100 shadow-card cursor-pointer transition-all hover:shadow-lg border-l-4 border-l-primary">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono font-bold text-slate-400">#8821</span>
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-500 uppercase tracking-wide">High</span>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">10:00 AM</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-1">GPS Tracker Offline & Server Down</h3>
+                            <p class="text-sm text-slate-500 mb-3">User reporting device unresponsive. Location data
+                                last
+                                sync was 48 hours ago.</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="size-6 rounded-full bg-purple-100 flex items-center justify-center text-[10px] text-purple-700 font-bold">
+                                        SJ</div>
+                                    <span class="text-sm font-medium text-slate-500">Sarah Jenkins</span>
+                                </div>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">In
+                                    Progress</span>
+                            </div>
+                        </div>
+
+                        <!-- Ticket 2 -->
+                        <div
+                            class="p-5 rounded-2xl bg-white border border-slate-100 shadow-card cursor-pointer transition-all hover:shadow-lg">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono font-bold text-slate-400">#8819</span>
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-500 uppercase tracking-wide">High</span>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Yesterday</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-1">Mobile App Login Failed</h3>
+                            <p class="text-sm text-slate-500 mb-3">IT has fixed the authentication issue. Waiting for
+                                customer confirmation.</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="size-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] text-blue-700 font-bold">
+                                        RK</div>
+                                    <span class="text-sm font-medium text-slate-500">Ryan Kim</span>
+                                </div>
+                                <span
+                                    class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">Pending
+                                    Review</span>
+                            </div>
+                        </div>
+
+                        <!-- Ticket 3 -->
+                        <div
+                            class="p-5 rounded-2xl bg-white border border-slate-100 shadow-card cursor-pointer transition-all hover:shadow-lg">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono font-bold text-slate-400">#8820</span>
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-600 uppercase tracking-wide">Medium</span>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">1h ago</span>
+                            </div>
+                            <h3 class="text-base font-semibold text-slate-900 mb-1">Billing Inquiry - Subscription
+                                Charge
+                            </h3>
+                            <p class="text-sm text-slate-500 mb-3">Customer asking about extra charges on their monthly
+                                bill.</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="size-6 rounded-full bg-green-100 flex items-center justify-center text-[10px] text-green-700 font-bold">
+                                        JM</div>
+                                    <span class="text-sm font-medium text-slate-500">John Miller</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="w-[450px] flex flex-col gap-6 min-w-0 h-full">
+                <!-- Senior Actions -->
+                <div class="bg-transparent flex flex-col gap-4">
+                    <div
+                        class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
+                        <span class="material-symbols-outlined text-base">bolt</span>
+                        Senior Actions
+                    </div>
+                    <div class="bg-white p-6 rounded-[2rem] shadow-soft flex flex-col gap-3">
+                        <button
+                            class="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-3 transition-colors">
+                            <span class="material-symbols-outlined">edit_note</span>
+                            Add Note
+                        </button>
+                        <button
+                            class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-3 transition-colors">
+                            <span class="material-symbols-outlined">engineering</span>
+                            Assign to IT Support
+                        </button>
+                        <button
+                            class="w-full bg-green-50 hover:bg-green-100 text-green-600 font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-3 transition-colors">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Mark as Resolved
+                        </button>
+                        <button
+                            class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-3 transition-colors shadow-lg shadow-primary/30">
+                            <span class="material-symbols-outlined">lock</span>
+                            Close Ticket
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audit Timeline -->
+                <div class="flex-1 bg-white rounded-[2rem] shadow-soft flex flex-col overflow-hidden min-h-0">
+                    <div class="p-6 pb-4 bg-white sticky top-0 z-10">
+                        <div
+                            class="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
+                            <span class="material-symbols-outlined text-slate-400 text-lg">history</span>
+                            Audit Timeline
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto px-6 pb-6 no-scrollbar">
+                        <div
+                            class="relative pl-4 mt-2 space-y-8 before:absolute before:left-[5px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
+                            <div class="relative group">
+                                <div
+                                    class="absolute -left-[15px] top-1.5 size-3 rounded-full bg-primary ring-4 ring-white shadow-md shadow-primary/30">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-xs font-mono text-slate-400 font-bold">11:00 AM</span>
+                                    <div
+                                        class="bg-slate-50 p-4 rounded-2xl hover:bg-white hover:shadow-card transition-all cursor-default">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <div class="size-5 rounded-full bg-cover bg-center"
+                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAoS1f1jqiPLCv9wP1ZX5ODYa0ghkKGjzT0pHb0bhhH20OWJucjJF3IaQ3_s7kGdgzSrESvLELeRePVCXvRr6Yy6B44ot4XYOMJ8EMZqG-XCW3_LdyPn99i7jvXqfWcPrKLwpHBNINwHk8ii2yZhCVjb4ie45MSAzkKY1ThrKQqU6IW1IYNMpiJCMbLekMBKotxWueVnTbLJwOjHjthhnsBYumDmvRUF1jRAc8enpPdmTnLWmqaUL-YtKY7AbgW3bg6V9BjT3ZcykA');">
+                                            </div>
+                                            <p class="text-sm font-bold text-slate-900">Jay assigned to IT</p>
+                                        </div>
+                                        <p class="text-xs text-slate-500">Escalation Level 2</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -left-[15px] top-1.5 size-3 rounded-full bg-slate-200 ring-4 ring-white">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-xs font-mono text-slate-400 font-medium">10:15 AM</span>
+                                    <div
+                                        class="bg-slate-50 p-4 rounded-2xl hover:bg-white hover:shadow-card transition-all cursor-default">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <div class="size-5 rounded-full bg-cover bg-center"
+                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDN0rsqgI4Fv1zrp1NtwFDfMAtVMQ2Oy1GVDJOvJ6nCUCQ7jsiVV56xA7nbgCm5tdWoz7uRJrvKLjNMVQjnTMrOkljsYHrZQXhnMHQ5CdvP5axphgV6bpBS37A56yKKtC62X_dV8ExJ__FV1vSZxJHnm6MtQpfaAfapPm0coFGD-DUok5mewrK8Mmy6ABuxS5_YsFmQs1t22lop8_n8TY7Vk9QXC4c9Gu2AMIHn2KB-a37kNDLDGLObRehy6a9NVQSgv140p_nRAM8');">
+                                            </div>
+                                            <p class="text-sm font-bold text-slate-900">Himari escalated</p>
+                                        </div>
+                                        <p class="text-xs text-slate-500">Requested senior review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -left-[15px] top-1.5 size-3 rounded-full bg-slate-200 ring-4 ring-white">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-xs font-mono text-slate-400 font-medium">10:00 AM</span>
+                                    <div
+                                        class="bg-slate-50 p-4 rounded-2xl hover:bg-white hover:shadow-card transition-all cursor-default">
+                                        <p class="text-sm font-bold text-slate-900">AI classified as High</p>
+                                        <div class="flex gap-2 mt-2">
+                                            <span
+                                                class="text-[10px] font-bold text-red-700 bg-red-100/50 px-2 py-1 rounded-md">HIGH
+                                                PRIORITY</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -left-[15px] top-1.5 size-3 rounded-full bg-slate-200 ring-4 ring-white">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-xs font-mono text-slate-400 font-medium">09:58 AM</span>
+                                    <div
+                                        class="bg-slate-50 p-4 rounded-2xl hover:bg-white hover:shadow-card transition-all cursor-default">
+                                        <p class="text-sm font-bold text-slate-900">Ticket Created</p>
+                                        <p class="text-xs text-slate-500 mt-1 truncate">Source: Freshchat Webhook</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Floating Chat Widget -->
+    <div id="chatWidget" class="fixed bottom-6 right-6 z-50">
+        <!-- Chat Button -->
+        <button id="chatToggle" onclick="toggleChat()"
+            class="size-14 rounded-full bg-primary text-white shadow-lg shadow-primary/30 flex items-center justify-center hover:bg-primary-dark transition-all hover:scale-105">
+            <span class="material-symbols-outlined text-2xl" id="chatIcon">chat</span>
+        </button>
+
+        <!-- Notification Badge -->
+        <span
+            class="absolute -top-1 -right-1 size-5 bg-green-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">2</span>
+
+        <!-- Chat Panel -->
+        <div id="chatPanel"
+            class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-primary-dark text-white p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-lg">Messages</h3>
+                    <button onclick="toggleChat()"
+                        class="size-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
+                </div>
+                <p class="text-sm opacity-80 mt-1">Team Communication</p>
+            </div>
+
+            <!-- Contacts List (default view) -->
+            <div id="contactsList" class="max-h-96 overflow-y-auto">
+                <!-- Senior CS -->
+                <div class="px-4 py-2 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Senior CS
+                </div>
+                <div onclick="openChat('Jay Won', 'Senior CS')"
+                    class="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                    <div class="relative">
+                        <div class="size-10 rounded-full bg-cover bg-center"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAoS1f1jqiPLCv9wP1ZX5ODYa0ghkKGjzT0pHb0bhhH20OWJucjJF3IaQ3_s7kGdgzSrESvLELeRePVCXvRr6Yy6B44ot4XYOMJ8EMZqG-XCW3_LdyPn99i7jvXqfWcPrKLwpHBNINwHk8ii2yZhCVjb4ie45MSAzkKY1ThrKQqU6IW1IYNMpiJCMbLekMBKotxWueVnTbLJwOjHjthhnsBYumDmvRUF1jRAc8enpPdmTnLWmqaUL-YtKY7AbgW3bg6V9BjT3ZcykA');">
+                        </div>
+                        <span
+                            class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-slate-900">Jay Won</p>
+                        <p class="text-xs text-slate-400">Online</p>
+                    </div>
+                    <span
+                        class="size-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
+                </div>
+
+                <!-- Junior CS -->
+                <div class="px-4 py-2 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Junior CS
+                </div>
+                <div onclick="openChat('Himari', 'Junior CS')"
+                    class="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                    <div class="relative">
+                        <div class="size-10 rounded-full bg-cover bg-center"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDN0rsqgI4Fv1zrp1NtwFDfMAtVMQ2Oy1GVDJOvJ6nCUCQ7jsiVV56xA7nbgCm5tdWoz7uRJrvKLjNMVQjnTMrOkljsYHrZQXhnMHQ5CdvP5axphgV6bpBS37A56yKKtC62X_dV8ExJ__FV1vSZxJHnm6MtQpfaAfapPm0coFGD-DUok5mewrK8Mmy6ABuxS5_YsFmQs1t22lop8_n8TY7Vk9QXC4c9Gu2AMIHn2KB-a37kNDLDGLObRehy6a9NVQSgv140p_nRAM8');">
+                        </div>
+                        <span
+                            class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-slate-900">Himari</p>
+                        <p class="text-xs text-slate-400">Online</p>
+                    </div>
+                </div>
+                <div onclick="openChat('Andi R.', 'Junior CS')"
+                    class="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                    <div class="relative">
+                        <div
+                            class="size-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm">
+                            AR</div>
+                        <span
+                            class="absolute bottom-0 right-0 size-3 bg-slate-300 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-slate-900">Andi R.</p>
+                        <p class="text-xs text-slate-400">Offline</p>
+                    </div>
+                </div>
+
+                <!-- IT Support -->
+                <div class="px-4 py-2 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    IT Support
+                </div>
+                <div onclick="openChat('Budi Santoso', 'IT Support')"
+                    class="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                    <div class="relative">
+                        <div
+                            class="size-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
+                            IT</div>
+                        <span
+                            class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-slate-900">Budi Santoso</p>
+                        <p class="text-xs text-slate-400">Online</p>
+                    </div>
+                    <span
+                        class="size-5 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
+                </div>
+
+                <!-- Admin -->
+                <div class="px-4 py-2 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Admin
+                </div>
+                <div onclick="openChat('Admin', 'Super Admin')"
+                    class="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer">
+                    <div class="relative">
+                        <div
+                            class="size-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-sm">
+                            SA</div>
+                        <span
+                            class="absolute bottom-0 right-0 size-3 bg-slate-300 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-slate-900">Admin</p>
+                        <p class="text-xs text-slate-400">Offline</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Conversation (hidden by default) -->
+            <div id="chatConversation" class="hidden flex flex-col h-96">
+                <!-- Chat Header -->
+                <div class="p-3 border-b border-slate-100 flex items-center gap-3">
+                    <button onclick="backToContacts()"
+                        class="size-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+                        <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    </button>
+                    <div class="flex-1">
+                        <p id="chatName" class="text-sm font-bold text-slate-900">Name</p>
+                        <p id="chatRole" class="text-[10px] text-slate-400">Role</p>
+                    </div>
+                    <span class="size-2 bg-green-500 rounded-full"></span>
+                </div>
+
+                <!-- Messages -->
+                <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
+                    <!-- Received -->
+                    <div class="flex gap-2">
+                        <div
+                            class="size-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px] flex-shrink-0">
+                            IT</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[80%]">
+                            <p class="text-sm text-slate-700">Hey, ticket #8821 sudah aku cek. Ada masalah hardware di
+                                GPS device-nya.</p>
+                            <p class="text-[10px] text-slate-400 mt-1">10:30 AM</p>
+                        </div>
+                    </div>
+
+                    <!-- Sent -->
+                    <div class="flex gap-2 justify-end">
+                        <div class="bg-primary text-white p-3 rounded-2xl rounded-tr-none max-w-[80%]">
+                            <p class="text-sm">OK noted, berarti perlu replace ya?</p>
+                            <p class="text-[10px] opacity-70 mt-1">10:32 AM</p>
+                        </div>
+                    </div>
+
+                    <!-- Received -->
+                    <div class="flex gap-2">
+                        <div
+                            class="size-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px] flex-shrink-0">
+                            IT</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[80%]">
+                            <p class="text-sm text-slate-700">Iya, aku sudah koordinasi sama tim field. Besok bisa
+                                dispatch 👍</p>
+                            <p class="text-[10px] text-slate-400 mt-1">10:35 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="p-3 border-t border-slate-100 flex gap-2">
+                    <input type="text" placeholder="Type a message..."
+                        class="flex-1 px-4 py-2 bg-slate-100 rounded-full border-none text-sm focus:ring-2 focus:ring-primary/20">
+                    <button
+                        class="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-dark">
+                        <span class="material-symbols-outlined text-lg">send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            const icon = document.getElementById('chatIcon');
+            panel.classList.toggle('hidden');
+            icon.textContent = panel.classList.contains('hidden') ? 'chat' : 'close';
+        }
+
+        function openChat(name, role) {
+            document.getElementById('contactsList').classList.add('hidden');
+            document.getElementById('chatConversation').classList.remove('hidden');
+            document.getElementById('chatName').textContent = name;
+            document.getElementById('chatRole').textContent = role;
+        }
+
+        function backToContacts() {
+            document.getElementById('contactsList').classList.remove('hidden');
+            document.getElementById('chatConversation').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>
