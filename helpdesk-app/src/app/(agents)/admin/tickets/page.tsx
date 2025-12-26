@@ -92,7 +92,13 @@ export default function AdminTicketsPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ...data,
+                    subject: data.subject,
+                    description: data.description,
+                    priority: data.priority,
+                    source: data.source,
+                    customer_name: data.customerName,
+                    customer_email: data.customerEmail,
+                    customer_phone: data.customerPhone,
                     created_by_id: user?.id,
                 }),
             });
