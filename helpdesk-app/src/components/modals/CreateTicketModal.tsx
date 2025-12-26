@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../ui/Modal';
 import CustomSelect from '../ui/CustomSelect';
 
@@ -8,6 +8,8 @@ interface CreateTicketModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: TicketFormData) => Promise<void>;
+    initialData?: TicketFormData | null;
+    mode?: 'create' | 'edit';
 }
 
 export interface TicketFormData {
@@ -30,10 +32,24 @@ const initialFormData: TicketFormData = {
     source: 'Freshchat',
 };
 
-export default function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketModalProps) {
+export default function CreateTicketModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    initialData,
+    mode = 'create'
+}: CreateTicketModalProps) {
     const [formData, setFormData] = useState<TicketFormData>(initialFormData);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Partial<Record<keyof TicketFormData, string>>>({});
+
+    useEffect(() => {
+        if (isOpen && initialData) {
+            setFormData(initialData);
+        } else if (isOpen && mode === 'create') {
+            setFormData(initialFormData);
+        }
+    }, [isOpen, initialData, mode]);
 
     const validate = (): boolean => {
         const newErrors: Partial<Record<keyof TicketFormData, string>> = {};
@@ -57,23 +73,32 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateT
         setIsLoading(true);
         try {
             await onSubmit(formData);
-            setFormData(initialFormData);
+            if (mode === 'create') {
+                setFormData(initialFormData);
+            }
             onClose();
         } catch (error) {
-            console.error('Failed to create ticket:', error);
+            console.error('Failed to save ticket:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleClose = () => {
-        setFormData(initialFormData);
+        if (mode === 'create') {
+            setFormData(initialFormData);
+        }
         setErrors({});
         onClose();
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose} title="Create New Ticket" size="lg">
+        <Modal
+            isOpen={isOpen}
+            onClose={handleClose}
+            title={mode === 'edit' ? "Edit Ticket" : "Create New Ticket"}
+            size="lg"
+        >
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Subject */}
                 <div>
@@ -205,10 +230,10 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateT
                         {isLoading ? (
                             <span className="flex items-center justify-center gap-2">
                                 <span className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Creating...
+                                {mode === 'edit' ? 'Saving...' : 'Creating...'}
                             </span>
                         ) : (
-                            'Create Ticket'
+                            mode === 'edit' ? 'Save Changes' : 'Create Ticket'
                         )}
                     </button>
                 </div>

@@ -27,6 +27,7 @@ interface TicketTableProps {
     showAssignedTo?: boolean;
     showSource?: boolean;
     onViewTicket?: (ticketId: string) => void;
+    onEditTicket?: (ticketId: string) => void;
     onAssignTicket?: (ticketId: string) => void;
 }
 
@@ -58,6 +59,7 @@ export default function TicketTable({
     showAssignedTo = true,
     showSource = true,
     onViewTicket,
+    onEditTicket,
     onAssignTicket
 }: TicketTableProps) {
     return (
@@ -139,6 +141,15 @@ export default function TicketTable({
                             >
                                 <span className="material-symbols-outlined text-sm">visibility</span>
                             </button>
+                            {onEditTicket && (
+                                <button
+                                    onClick={() => onEditTicket?.(ticket.id)}
+                                    className="size-7 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 hover:bg-blue-100"
+                                    title="Edit"
+                                >
+                                    <span className="material-symbols-outlined text-sm">edit</span>
+                                </button>
+                            )}
                             {!ticket.assignedTo && onAssignTicket && (
                                 <button
                                     onClick={() => onAssignTicket?.(ticket.id)}

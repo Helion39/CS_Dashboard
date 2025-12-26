@@ -53,6 +53,9 @@ export default function SeniorTicketsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [priorityFilter, setPriorityFilter] = useState('');
 
+    const [editingTicket, setEditingTicket] = useState<TicketFormData | null>(null);
+    const [editingTicketId, setEditingTicketId] = useState<string | null>(null);
+
     // Get current user
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -111,30 +114,86 @@ export default function SeniorTicketsPage() {
         fetchData();
     }, [fetchData]);
 
-    const handleCreateTicket = async (data: TicketFormData) => {
+    const handleEditTicket = async (id: string) => {
+        const loadingToast = toast.loading('Loading ticket details...');
         try {
-            const res = await fetch('/api/tickets', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject: data.subject,
-                    description: data.description,
-                    priority: data.priority,
-                    source: data.source,
-                    customer_name: data.customerName,
-                    customer_email: data.customerEmail,
-                    customer_phone: data.customerPhone,
-                    created_by_id: userId,
-                }),
-            });
-            if (res.ok) {
-                toast.success('Ticket created successfully!');
-            } else {
-                toast.error('Failed to create ticket');
+            const res = await fetch(`/api/tickets/${id}`);
+            const data = await res.json();
+
+            if (data.ticket) {
+                setEditingTicket({
+                    subject: data.ticket.subject,
+                    description: data.ticket.description || '',
+                    priority: data.ticket.priority,
+                    source: data.ticket.source,
+                    customerName: data.ticket.customer_name,
+                    customerEmail: data.ticket.customer_email || '',
+                    customerPhone: data.ticket.customer_phone || '',
+                });
+                setEditingTicketId(id);
+                setShowCreateModal(true);
+                toast.dismiss(loadingToast);
             }
-            fetchData();
-        } catch {
-            toast.error('Network error');
+        } catch (error) {
+            console.error('Error fetching ticket details:', error);
+            toast.error('Failed to load ticket details', { id: loadingToast });
+        }
+    };
+
+    const handleCreateOrUpdateTicket = async (data: TicketFormData) => {
+        if (editingTicketId) {
+            // Update existing ticket
+            try {
+                const res = await fetch(`/api/tickets/${editingTicketId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: data.subject,
+                        description: data.description,
+                        priority: data.priority,
+                        source: data.source,
+                        customer_name: data.customerName,
+                        customer_email: data.customerEmail,
+                        customer_phone: data.customerPhone,
+                        user_id: userId,
+                    }),
+                });
+
+                if (res.ok) {
+                    toast.success('Ticket updated successfully!');
+                } else {
+                    toast.error('Failed to update ticket');
+                }
+                fetchData();
+            } catch {
+                toast.error('Network error');
+            }
+        } else {
+            // Create new ticket
+            try {
+                const res = await fetch('/api/tickets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: data.subject,
+                        description: data.description,
+                        priority: data.priority,
+                        source: data.source,
+                        customer_name: data.customerName,
+                        customer_email: data.customerEmail,
+                        customer_phone: data.customerPhone,
+                        created_by_id: userId,
+                    }),
+                });
+                if (res.ok) {
+                    toast.success('Ticket created successfully!');
+                } else {
+                    toast.error('Failed to create ticket');
+                }
+                fetchData();
+            } catch {
+                toast.error('Network error');
+            }
         }
     };
 
@@ -263,6 +322,7 @@ export default function SeniorTicketsPage() {
                         setSelectedTicket(id);
                         // TODO: Open detail modal
                     }}
+                    onEditTicket={handleEditTicket}
                     onAssignTicket={(id) => {
                         setSelectedTicket(id);
                         setShowAssignModal(true);
@@ -270,11 +330,17 @@ export default function SeniorTicketsPage() {
                 />
             )}
 
-            {/* Create Ticket Modal */}
+            {/* Create/Edit Ticket Modal */}
             <CreateTicketModal
                 isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSubmit={handleCreateTicket}
+                onClose={() => {
+                    setShowCreateModal(false);
+                    setEditingTicket(null);
+                    setEditingTicketId(null);
+                }}
+                onSubmit={handleCreateOrUpdateTicket}
+                initialData={editingTicket}
+                mode={editingTicketId ? 'edit' : 'create'}
             />
 
             {/* Assign Ticket Modal */}

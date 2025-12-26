@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface AgentMetrics {
     id: string;
@@ -80,17 +81,18 @@ export default function AdminReportsPage() {
                     <p className="text-sm text-slate-500 mt-1">Company-wide performance metrics</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <select
+                    <CustomSelect
                         value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
-                        className="px-4 py-2.5 bg-white rounded-full shadow-soft text-sm font-medium focus:ring-2 focus:ring-slate-800/20 focus:outline-none"
-                    >
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="quarter">This Quarter</option>
-                        <option value="all">All Time</option>
-                    </select>
-                    <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg hover:bg-slate-900 transition-colors">
+                        onChange={setPeriod}
+                        options={[
+                            { value: 'week', label: 'This Week' },
+                            { value: 'month', label: 'This Month' },
+                            { value: 'quarter', label: 'This Quarter' },
+                            { value: 'all', label: 'All Time' },
+                        ]}
+                        variant="filter"
+                    />
+                    <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg shadow-slate-800/30 hover:bg-slate-700 transition-colors">
                         <span className="material-symbols-outlined text-lg">download</span>
                         Export Report
                     </button>
@@ -189,10 +191,10 @@ export default function AdminReportsPage() {
                                         <td className="py-4">
                                             {agent.metrics.rating ? (
                                                 <span className={`text-xs font-medium px-2 py-1 rounded-full ${agent.metrics.rating === 'Excellent' ? 'bg-green-50 text-green-600' :
-                                                        agent.metrics.rating === 'Great' ? 'bg-green-50 text-green-600' :
-                                                            agent.metrics.rating === 'Good' ? 'bg-amber-50 text-amber-600' :
-                                                                agent.metrics.rating === 'Needs Improvement' ? 'bg-orange-50 text-orange-600' :
-                                                                    'bg-red-50 text-red-600'
+                                                    agent.metrics.rating === 'Great' ? 'bg-green-50 text-green-600' :
+                                                        agent.metrics.rating === 'Good' ? 'bg-amber-50 text-amber-600' :
+                                                            agent.metrics.rating === 'Needs Improvement' ? 'bg-orange-50 text-orange-600' :
+                                                                'bg-red-50 text-red-600'
                                                     }`}>
                                                     {agent.metrics.rating}
                                                 </span>

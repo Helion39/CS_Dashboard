@@ -17,10 +17,21 @@ interface Ticket {
     status: string;
     customer_name: string;
     created_at: string;
+    created_by?: {
+        name: string;
+    };
+}
+
+interface Activity {
+    id: string;
+    action: string;
+    details: string;
+    created_at: string;
 }
 
 export default function JuniorDashboardPage() {
     const [tickets, setTickets] = useState<Ticket[]>([]);
+    const [activities, setActivities] = useState<Activity[]>([]);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [userName, setUserName] = useState('');
     const [userId, setUserId] = useState('');
@@ -53,10 +64,8 @@ export default function JuniorDashboardPage() {
                 (t: Ticket) => t.status !== 'CLOSED' && t.status !== 'RESOLVED'
             );
             setTickets(activeTickets);
-            if (activeTickets.length > 0 && !selectedTicket) {
-                setSelectedTicket(activeTickets[0]);
-            }
 
+            // Update stats
             const statsRes = await fetch(`/api/stats?user_id=${userId}`);
             const statsData = await statsRes.json();
             if (statsData.userStats) {
@@ -67,16 +76,37 @@ export default function JuniorDashboardPage() {
                     total: statsData.userStats.assigned,
                 });
             }
+
+            // Fetch activities
+            const activitiesRes = await fetch(`/api/activities?user_id=${userId}&limit=10`);
+            const activitiesData = await activitiesRes.json();
+            setActivities(activitiesData.activities || []);
+
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
             setIsLoadingData(false);
         }
-    }, [userId, selectedTicket]);
+    }, [userId]);
 
     useEffect(() => {
         if (userId) fetchData();
     }, [userId, fetchData]);
+
+    // Handle default selection
+    useEffect(() => {
+        if (tickets.length > 0 && !selectedTicket) {
+            setSelectedTicket(tickets[0]);
+        }
+    }, [tickets, selectedTicket]);
+
+    // Update selected ticket data when tickets refresh
+    useEffect(() => {
+        if (selectedTicket && tickets.length > 0) {
+            const updated = tickets.find(t => t.id === selectedTicket.id);
+            if (updated) setSelectedTicket(updated);
+        }
+    }, [tickets]);
 
     const handleAddNote = async (note: string) => {
         if (!selectedTicket) return;
@@ -122,6 +152,13 @@ export default function JuniorDashboardPage() {
         if (diffMins < 60) return `${diffMins}m ago`;
         if (diffHours < 24) return `${diffHours}h ago`;
         return `${Math.floor(diffMs / 86400000)}d ago`;
+    };
+
+    const getActivityColor = (action: string) => {
+        if (action.includes('CLOSED') || action.includes('RESOLVED')) return 'green';
+        if (action.includes('ESCALATED') || action.includes('IT')) return 'blue';
+        if (action.includes('ASSIGNED')) return 'amber';
+        return 'slate';
     };
 
     const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -193,8 +230,8 @@ export default function JuniorDashboardPage() {
                 <div className="w-[450px] flex flex-col gap-4 min-w-0 overflow-hidden">
                     <div className="flex-shrink-0">
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">
-                            <span className="material-symbols-outlined text-base">bolt</span>
-                            Quick Actions
+                            <span className="material-symbols-outlined text-base">support_agent</span>
+                            CS Actions
                         </div>
                         <div className="bg-white p-6 rounded-[2rem] shadow-soft flex flex-col gap-3">
                             <button
@@ -211,24 +248,104 @@ export default function JuniorDashboardPage() {
                                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-3 transition-colors shadow-lg shadow-emerald-500/30 disabled:opacity-50"
                             >
                                 <span className="material-symbols-outlined">task_alt</span>
-                                Mark as Done
+                                Mark as Done (Request Senior Review)
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex-1 bg-white rounded-[2rem] shadow-soft p-6 min-h-0">
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                            <span className="material-symbols-outlined text-base">tips_and_updates</span>
-                            Tips for Today
-                        </div>
-                        <div className="space-y-3">
-                            <div className="bg-emerald-50 rounded-xl p-3">
-                                <p className="text-sm text-emerald-700 font-medium">💡 Remember to add notes before marking as done!</p>
+                    <div className="flex-1 bg-white rounded-[2rem] shadow-soft flex flex-col overflow-hidden min-h-0">
+                        {selectedTicket ? (
+                            <>
+                                {/* Header */}
+                                <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between flex-shrink-0">
+                                    <div className="flex items-center gap-3">
+                                        <h3 className="text-base font-bold">Ticket #{selectedTicket.number}</h3>
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${selectedTicket.priority === 'HIGH' ? 'bg-red-50 text-red-600' :
+                                            selectedTicket.priority === 'MEDIUM' ? 'bg-amber-50 text-amber-600' :
+                                                'bg-blue-50 text-blue-600'
+                                            }`}>
+                                            {selectedTicket.priority}
+                                        </span>
+                                    </div>
+                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                                        {selectedTicket.status.replace('_', ' ')}
+                                    </span>
+                                </div>
+
+                                {/* Fixed Ticket Info */}
+                                <div className="px-6 py-4 flex-shrink-0 border-b border-slate-50">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+                                        <span className="material-symbols-outlined text-base">info</span>
+                                        Ticket Details
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="bg-slate-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Issue Type</p>
+                                            <p className="text-sm font-semibold text-slate-700 mt-1 truncate">{selectedTicket.subject}</p>
+                                        </div>
+                                        <div className="bg-slate-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Customer</p>
+                                            <p className="text-sm font-semibold text-slate-700 mt-1 truncate">{selectedTicket.customer_name}</p>
+                                        </div>
+                                        <div className="bg-slate-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Assigned By</p>
+                                            <p className="text-sm font-semibold text-slate-700 mt-1 truncate">
+                                                {selectedTicket.created_by?.name || 'System'}
+                                            </p>
+                                        </div>
+                                        <div className="bg-slate-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Priority</p>
+                                            <p className={`text-sm font-semibold mt-1 ${selectedTicket.priority === 'HIGH' ? 'text-red-600' :
+                                                selectedTicket.priority === 'MEDIUM' ? 'text-amber-600' :
+                                                    'text-blue-600'
+                                                }`}>
+                                                {selectedTicket.priority.charAt(0) + selectedTicket.priority.slice(1).toLowerCase()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* My Activity Title */}
+                                <div className="px-6 pt-4 pb-2 flex-shrink-0">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        <span className="material-symbols-outlined text-slate-400 text-lg">history</span>
+                                        My Activity
+                                    </div>
+                                </div>
+
+                                {/* Scrollable Activity List */}
+                                <div className="flex-1 overflow-y-auto px-6 pb-4 no-scrollbar">
+                                    <div className="space-y-3">
+                                        {activities.map((activity) => (
+                                            <div key={activity.id} className="bg-slate-50 p-3 rounded-xl group hover:bg-white hover:shadow-card transition-all">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <p className="text-sm font-bold text-slate-900 truncate pr-2">{activity.details}</p>
+                                                    <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                                                        {new Date(activity.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className={`text-[10px] font-bold text-${getActivityColor(activity.action)}-600 uppercase`}>
+                                                        {activity.action.replace(/_/g, ' ')}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-400">
+                                                        {formatTimeAgo(activity.created_at)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {activities.length === 0 && (
+                                            <p className="text-center text-slate-400 text-sm py-4">No recent activity</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8">
+                                <span className="material-symbols-outlined text-4xl mb-2">touch_app</span>
+                                <p>Select a ticket to view details</p>
                             </div>
-                            <div className="bg-blue-50 rounded-xl p-3">
-                                <p className="text-sm text-blue-700 font-medium">📞 For technical issues, escalate to Senior CS first.</p>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -245,7 +362,7 @@ export default function JuniorDashboardPage() {
                 onClose={() => setShowDoneModal(false)}
                 onConfirm={handleMarkDone}
                 title="Mark as Done"
-                message={`This will mark ticket #${selectedTicket?.number} as done and send it to Senior CS for review.`}
+                message={`This will mark ticket #${selectedTicket?.number} as done and send it for review.`}
                 confirmText="Mark Done"
                 confirmColor="green"
                 isLoading={isLoading}

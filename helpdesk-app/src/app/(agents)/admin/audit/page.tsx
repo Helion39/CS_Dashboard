@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface Activity {
     id: string;
@@ -127,27 +128,29 @@ export default function AdminAuditPage() {
                     <p className="text-sm text-slate-500 mt-1">System activity and security logs</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <select
+                    <CustomSelect
                         value={actionFilter}
-                        onChange={(e) => setActionFilter(e.target.value)}
-                        className="px-4 py-2.5 bg-white rounded-full shadow-soft text-sm font-medium"
-                    >
-                        <option value="all">All Actions</option>
-                        <option value="login">User Login</option>
-                        <option value="ticket">Ticket Actions</option>
-                        <option value="admin">Admin Actions</option>
-                    </select>
-                    <select
+                        onChange={setActionFilter}
+                        options={[
+                            { value: 'all', label: 'All Actions' },
+                            { value: 'login', label: 'User Login' },
+                            { value: 'ticket', label: 'Ticket Actions' },
+                            { value: 'admin', label: 'Admin Actions' },
+                        ]}
+                        variant="filter"
+                    />
+                    <CustomSelect
                         value={dateFilter}
-                        onChange={(e) => setDateFilter(e.target.value)}
-                        className="px-4 py-2.5 bg-white rounded-full shadow-soft text-sm font-medium"
-                    >
-                        <option value="today">Today</option>
-                        <option value="week">Last 7 days</option>
-                        <option value="month">Last 30 days</option>
-                        <option value="all">All Time</option>
-                    </select>
-                    <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg">
+                        onChange={setDateFilter}
+                        options={[
+                            { value: 'today', label: 'Today' },
+                            { value: 'week', label: 'Last 7 days' },
+                            { value: 'month', label: 'Last 30 days' },
+                            { value: 'all', label: 'All Time' },
+                        ]}
+                        variant="filter"
+                    />
+                    <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg shadow-slate-800/30 hover:bg-slate-700 transition-colors">
                         <span className="material-symbols-outlined text-lg">download</span>
                         Export
                     </button>

@@ -87,11 +87,6 @@ export default function SeniorDashboardPage() {
             );
             setTickets(activeTickets.slice(0, 5)); // Show top 5
 
-            // Set first ticket as selected if none
-            if (activeTickets.length > 0 && !selectedTicket) {
-                setSelectedTicket(activeTickets[0]);
-            }
-
             // Fetch stats
             const statsRes = await fetch(`/api/stats?user_id=${userId}`);
             const statsData = await statsRes.json();
@@ -116,13 +111,21 @@ export default function SeniorDashboardPage() {
         } finally {
             setIsLoadingData(false);
         }
-    }, [userId, selectedTicket]);
+    }, [userId]);
 
+    // Initial load
     useEffect(() => {
         if (userId) {
             fetchData();
         }
     }, [userId, fetchData]);
+
+    // Handle default selection
+    useEffect(() => {
+        if (tickets.length > 0 && !selectedTicket) {
+            setSelectedTicket(tickets[0]);
+        }
+    }, [tickets, selectedTicket]);
 
     const handleAddNote = async (note: string) => {
         if (!selectedTicket) return;
@@ -368,7 +371,7 @@ export default function SeniorDashboardPage() {
                     {/* Audit Timeline */}
                     <div className="flex-1 bg-white rounded-[2rem] shadow-soft flex flex-col overflow-hidden min-h-0">
                         <div className="p-6 pb-4 bg-white sticky top-0 z-10">
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                                 <span className="material-symbols-outlined text-slate-400 text-lg">history</span>
                                 Audit Timeline
                             </div>

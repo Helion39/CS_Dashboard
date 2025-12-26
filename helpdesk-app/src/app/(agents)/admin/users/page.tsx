@@ -157,7 +157,7 @@ export default function AdminUsersPage() {
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-full font-bold text-sm shadow-lg shadow-slate-800/30 hover:bg-slate-700 transition-colors"
                     >
                         <span className="material-symbols-outlined text-lg">person_add</span>
                         Add User

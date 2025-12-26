@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface Stats {
     total: number;
@@ -74,16 +75,17 @@ export default function AdminAnalyticsPage() {
                     <p className="text-sm text-slate-500 mt-1">Deep dive into system metrics</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <select
+                    <CustomSelect
                         value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
-                        className="px-4 py-2.5 bg-white rounded-full shadow-soft text-sm font-medium"
-                    >
-                        <option value="week">Last 7 days</option>
-                        <option value="month">Last 30 days</option>
-                        <option value="quarter">Last 90 days</option>
-                        <option value="all">All Time</option>
-                    </select>
+                        onChange={setPeriod}
+                        options={[
+                            { value: 'week', label: 'Last 7 days' },
+                            { value: 'month', label: 'Last 30 days' },
+                            { value: 'quarter', label: 'Last 90 days' },
+                            { value: 'all', label: 'All Time' },
+                        ]}
+                        variant="filter"
+                    />
                 </div>
             </div>
 

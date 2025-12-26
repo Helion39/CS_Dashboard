@@ -19,6 +19,9 @@ export default function AdminTicketsPage() {
     const [statusFilter, setStatusFilter] = useState('');
     const [priorityFilter, setPriorityFilter] = useState('');
 
+    const [editingTicket, setEditingTicket] = useState<TicketFormData | null>(null);
+    const [editingTicketId, setEditingTicketId] = useState<string | null>(null);
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -82,35 +85,85 @@ export default function AdminTicketsPage() {
         }
     };
 
-    const handleCreateTicket = async (data: TicketFormData) => {
-        const loadingToast = toast.loading('Creating ticket...');
+    const handleEditTicket = async (id: string) => {
+        const loadingToast = toast.loading('Loading ticket details...');
+        try {
+            const res = await fetch(`/api/tickets/${id}`);
+            const data = await res.json();
+
+            if (data.ticket) {
+                setEditingTicket({
+                    subject: data.ticket.subject,
+                    description: data.ticket.description || '',
+                    priority: data.ticket.priority,
+                    source: data.ticket.source,
+                    customerName: data.ticket.customer_name,
+                    customerEmail: data.ticket.customer_email || '',
+                    customerPhone: data.ticket.customer_phone || '',
+                });
+                setEditingTicketId(id);
+                setShowCreateModal(true);
+                toast.dismiss(loadingToast);
+            }
+        } catch (error) {
+            console.error('Error fetching ticket details:', error);
+            toast.error('Failed to load ticket details', { id: loadingToast });
+        }
+    };
+
+    const handleCreateOrUpdateTicket = async (data: TicketFormData) => {
+        const loadingToast = toast.loading(editingTicketId ? 'Updating ticket...' : 'Creating ticket...');
         try {
             const userStr = localStorage.getItem('user');
             const user = userStr ? JSON.parse(userStr) : null;
 
-            const res = await fetch('/api/tickets', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject: data.subject,
-                    description: data.description,
-                    priority: data.priority,
-                    source: data.source,
-                    customer_name: data.customerName,
-                    customer_email: data.customerEmail,
-                    customer_phone: data.customerPhone,
-                    created_by_id: user?.id,
-                }),
-            });
+            if (editingTicketId) {
+                // Update
+                const res = await fetch(`/api/tickets/${editingTicketId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: data.subject,
+                        description: data.description,
+                        priority: data.priority,
+                        source: data.source,
+                        customer_name: data.customerName,
+                        customer_email: data.customerEmail,
+                        customer_phone: data.customerPhone,
+                        user_id: user?.id,
+                    }),
+                });
 
-            if (!res.ok) throw new Error('Failed to create ticket');
+                if (!res.ok) throw new Error('Failed to update ticket');
+                toast.success('Ticket updated successfully', { id: loadingToast });
+            } else {
+                // Create
+                const res = await fetch('/api/tickets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: data.subject,
+                        description: data.description,
+                        priority: data.priority,
+                        source: data.source,
+                        customer_name: data.customerName,
+                        customer_email: data.customerEmail,
+                        customer_phone: data.customerPhone,
+                        created_by_id: user?.id,
+                    }),
+                });
 
-            toast.success('Ticket created successfully', { id: loadingToast });
+                if (!res.ok) throw new Error('Failed to create ticket');
+                toast.success('Ticket created successfully', { id: loadingToast });
+            }
+
             setShowCreateModal(false);
+            setEditingTicket(null);
+            setEditingTicketId(null);
             fetchData(); // Refresh list
         } catch (error) {
-            console.error('Create ticket error:', error);
-            toast.error('Failed to create ticket', { id: loadingToast });
+            console.error('Save ticket error:', error);
+            toast.error(editingTicketId ? 'Failed to update ticket' : 'Failed to create ticket', { id: loadingToast });
         }
     };
 
@@ -210,6 +263,7 @@ export default function AdminTicketsPage() {
                     onViewTicket={(id) => {
                         console.log('View ticket', id);
                     }}
+                    onEditTicket={handleEditTicket}
                     onAssignTicket={(id) => {
                         setSelectedTicketId(id);
                         setShowAssignModal(true);
@@ -217,11 +271,17 @@ export default function AdminTicketsPage() {
                 />
             )}
 
-            {/* Create Ticket Modal */}
+            {/* Create/Edit Ticket Modal */}
             <CreateTicketModal
                 isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSubmit={handleCreateTicket}
+                onClose={() => {
+                    setShowCreateModal(false);
+                    setEditingTicket(null);
+                    setEditingTicketId(null);
+                }}
+                onSubmit={handleCreateOrUpdateTicket}
+                initialData={editingTicket}
+                mode={editingTicketId ? 'edit' : 'create'}
             />
 
             {/* Assign Ticket Modal */}

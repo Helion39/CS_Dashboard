@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface UserStats {
     assigned: number;
@@ -89,16 +90,17 @@ export default function SeniorReportsPage() {
                     <p className="text-sm text-slate-500 mt-1">Your performance and activity reports</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <select
+                    <CustomSelect
                         value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
-                        className="px-4 py-2.5 bg-white rounded-full shadow-soft text-sm font-medium"
-                    >
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="quarter">This Quarter</option>
-                        <option value="all">All Time</option>
-                    </select>
+                        onChange={setPeriod}
+                        options={[
+                            { value: 'week', label: 'This Week' },
+                            { value: 'month', label: 'This Month' },
+                            { value: 'quarter', label: 'This Quarter' },
+                            { value: 'all', label: 'All Time' },
+                        ]}
+                        variant="filter"
+                    />
                     <button className="flex items-center gap-2 px-5 py-2.5 bg-[#EB4C36] text-white rounded-full font-bold text-sm shadow-lg shadow-[#EB4C36]/30">
                         <span className="material-symbols-outlined text-lg">download</span>
                         Export
