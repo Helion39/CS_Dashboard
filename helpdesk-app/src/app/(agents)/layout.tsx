@@ -78,7 +78,8 @@ export default function AgentsLayout({
             <main className="flex-1 flex flex-col gap-4 h-full overflow-hidden">
                 {children}
             </main>
-            <ChatWidget currentUserRole={displayRole} />
+            {/* Chat Widget */}
+            <ChatWidget currentUser={user} />
         </div>
     );
 }

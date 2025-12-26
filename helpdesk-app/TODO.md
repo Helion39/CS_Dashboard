@@ -150,15 +150,33 @@
 
 ---
 
+## Phase 7: Chat & Real-time Features 🚀 PLANNED
+
+### 7.1 Database Schema
+- [x] **conversations** table
+- [x] **conversation_participants** table
+- [x] **messages** table (update existing or create new)
+- [x] RLS Policies for secure messaging
+
+### 7.2 Frontend Implementation
+- [x] **Refactor ChatWidget** to use real data (remove mockContacts)
+- [x] **User List** fetching from database
+- [x] **Conversation** creation/retrieval logic
+- [x] **Message** sending/receiving logic
+
+### 7.3 Real-time Integration (Supabase)
+- [x] **Online Presence** (green dots) via Supabase Presence
+- [x] **Live Messages** via Supabase Realtime subscriptions
+- [x] **Typing indicators** (optional) - *Skipped for now*
+
+---
+
 ## Optional Features (Future)
 
-- [ ] Real-time updates with Supabase Realtime
 - [ ] Email notifications
 - [ ] File attachments on tickets
 - [ ] Export to CSV/PDF
 - [ ] SLA timers
-- [ ] Chat functionality
-- [ ] User online/offline status (last_seen_at)
 
 ---
 

@@ -6,11 +6,7 @@ export const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// Supabase client for server (with service role key for admin operations)
-export const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
 
 // Types for database tables
 export interface User {
@@ -67,15 +63,34 @@ export interface Activity {
     ticket?: Ticket;
 }
 
+// Chat Types
+export interface Conversation {
+    id: string;
+    type: 'direct' | 'group';
+    name: string | null;
+    created_at: string;
+    updated_at: string;
+    last_message: string | null;
+    last_message_at: string | null;
+}
+
+export interface ConversationParticipant {
+    conversation_id: string;
+    user_id: string;
+    joined_at: string;
+    last_read_at: string;
+}
+
 export interface Message {
     id: string;
-    content: string;
+    conversation_id: string;
     sender_id: string;
-    receiver_id: string | null;
-    ticket_id: string | null;
-    read: boolean;
+    content: string;
+    type: 'text' | 'image' | 'file';
+    file_url: string | null;
     created_at: string;
+    updated_at: string;
+    read_by: string[]; // JSONB array of user IDs
     // Joined data
     sender?: User;
-    receiver?: User;
 }
