@@ -38,6 +38,14 @@ export default function AgentsLayout({
             try {
                 const userData = JSON.parse(storedUser) as UserData;
                 setUser(userData);
+
+                // CRITICAL FIX: Redirect to correct role dashboard if on wrong page
+                const currentRole = pathname.split('/')[1];
+                if (currentRole !== userData.role) {
+                    console.log('⚠️ Wrong dashboard! Redirecting from', currentRole, 'to', userData.role);
+                    router.push(`/${userData.role}`);
+                    return;
+                }
             } catch {
                 // Invalid data, redirect to login
                 router.push('/login');
@@ -47,7 +55,7 @@ export default function AgentsLayout({
             router.push('/login');
         }
         setIsLoading(false);
-    }, [router]);
+    }, [router, pathname]);
 
     // Extract role from URL for fallback
     const roleFromUrl = pathname.split('/')[1] as UserRole;

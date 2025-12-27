@@ -107,53 +107,83 @@ export default function ChatWidget({ currentUser }: ChatWidgetProps) {
         fetchContacts();
     }, [currentUser]);
 
-    // Handle Conversation Selection
+    // Handle Conversation Selection + Refresh on chat open
     useEffect(() => {
         const loadConversation = async () => {
             if (!currentUser || !selectedContact) return;
 
+            console.log('🔍 Loading conversation for:', {
+                currentUser: currentUser.name,
+                selectedContact: selectedContact.name
+            });
+
             // 1. Find existing conversation with this user
             // STEP A: Get all my conversations
-            const { data: myConvos } = await supabase
+            const { data: myConvos, error: myConvosError } = await supabase
                 .from('conversation_participants')
                 .select('conversation_id')
                 .eq('user_id', currentUser.id);
 
+            console.log('📋 My conversations:', { myConvos, error: myConvosError });
+
             if (!myConvos || myConvos.length === 0) {
+                console.log('⚠️ No conversations found for current user');
                 setActiveConversationId(null);
                 setMessages([]);
                 return;
             }
 
             const myConvoIds = myConvos.map(c => c.conversation_id);
+            console.log('🔑 My conversation IDs:', myConvoIds);
 
             // STEP B: Check if selected contact is in any of these conversations
-            // We need to fetch participants for my conversations to see if the contact is there.
-            const { data: commonConvo } = await supabase
+            // IMPROVED: Get all participants in my conversations
+            const { data: allParticipants, error: participantsError } = await supabase
                 .from('conversation_participants')
-                .select('conversation_id')
-                .in('conversation_id', myConvoIds)
-                .eq('user_id', selectedContact.id)
-                .maybeSingle();
+                .select('conversation_id, user_id')
+                .in('conversation_id', myConvoIds);
 
-            if (commonConvo) {
-                setActiveConversationId(commonConvo.conversation_id);
+            console.log('👥 All participants:', { allParticipants, error: participantsError });
+
+            // Find conversation where BOTH me and selected contact are participants
+            let sharedConvoId = null;
+            if (allParticipants) {
+                for (const convoId of myConvoIds) {
+                    const participantIds = allParticipants
+                        .filter(p => p.conversation_id === convoId)
+                        .map(p => p.user_id);
+
+                    if (participantIds.includes(currentUser.id) && participantIds.includes(selectedContact.id)) {
+                        sharedConvoId = convoId;
+                        break;
+                    }
+                }
+            }
+
+            console.log('🤝 Shared conversation:', sharedConvoId);
+
+            if (sharedConvoId) {
+                setActiveConversationId(sharedConvoId);
+                console.log('✅ Found existing conversation:', sharedConvoId);
+
                 // Load messages
-                const { data: msgs } = await supabase
+                const { data: msgs, error: msgsError } = await supabase
                     .from('messages')
                     .select('*')
-                    .eq('conversation_id', commonConvo.conversation_id)
+                    .eq('conversation_id', sharedConvoId)
                     .order('created_at', { ascending: true });
 
+                console.log('💬 Messages loaded:', { count: msgs?.length, error: msgsError, messages: msgs });
                 setMessages(msgs || []);
             } else {
+                console.log('❌ No common conversation found - will create on first message');
                 setActiveConversationId(null); // Will create on first message
                 setMessages([]);
             }
         };
 
         loadConversation();
-    }, [currentUser, selectedContact]);
+    }, [currentUser, selectedContact]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Presence Subscription
     useEffect(() => {
@@ -192,34 +222,35 @@ export default function ChatWidget({ currentUser }: ChatWidgetProps) {
         };
     }, [currentUser]);
 
-    // Real-time Subscription (Messages)
+    // Real-time Subscription (Messages) - ALWAYS ACTIVE
     useEffect(() => {
-        if (!isOpen) return;
+        if (!currentUser) return;
 
         const channel = supabase
-            .channel('chat_updates')
+            .channel('chat_updates_' + currentUser.id)
             .on(
                 'postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'messages' },
                 (payload) => {
                     const newMsg = payload.new as Message;
+                    console.log('📨 New message received:', newMsg);
 
-                    // If it belongs to active conversation, append it
+                    // If it belongs to active conversation, append it immediately
                     if (activeConversationId && newMsg.conversation_id === activeConversationId) {
                         setMessages((prev) => {
-                            // Avoid duplicates if strict mode double-fires or race conditions
+                            // Avoid duplicates
                             if (prev.some(m => m.id === newMsg.id)) return prev;
                             return [...prev, newMsg];
                         });
                         // Scroll to bottom
                         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
-                        // Play sound
-                        audioRef.current?.play().catch(e => console.log('Audio play failed', e));
-
-                    } else {
-                        // TODO: Handle unread counts for other conversations
+                        // Play sound if chat is open
+                        if (isOpen) {
+                            audioRef.current?.play().catch(e => console.log('Audio play failed', e));
+                        }
                     }
+                    // Note: For other conversations, we could update unread counts here
                 }
             )
             .subscribe();
@@ -227,7 +258,7 @@ export default function ChatWidget({ currentUser }: ChatWidgetProps) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [isOpen, activeConversationId]);
+    }, [currentUser, activeConversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Send Message
     const handleSendMessage = async () => {

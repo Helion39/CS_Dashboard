@@ -42,6 +42,37 @@ export default function LoginPage() {
         }
     };
 
+    // Quick login for development
+    const quickLogin = async (email: string, password: string) => {
+        setEmail(email);
+        setPassword(password);
+        setError('');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || 'Login failed');
+                setIsLoading(false);
+                return;
+            }
+
+            localStorage.setItem('user', JSON.stringify(data.user));
+            router.push(`/${data.user.role}`);
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('Something went wrong.');
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
             <div className="w-full max-w-md">
@@ -95,6 +126,101 @@ export default function LoginPage() {
                             {isLoading ? 'Signing in...' : 'Sign In'}
                         </button>
                     </form>
+
+                    {/* Quick Login Buttons (Dev Only) */}
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                        <p className="text-xs text-slate-400 text-center mb-3">Quick Login (Development)</p>
+
+                        {/* Senior CS */}
+                        <div className="mb-3">
+                            <p className="text-xs font-medium text-slate-500 mb-2">Senior CS</p>
+                            <div className="grid grid-cols-2 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('dewi@vastel.co.id', 'senior123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-[#EB4C36]/10 hover:bg-[#EB4C36]/20 text-[#EB4C36] text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Dewi
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('reza@vastel.co.id', 'senior123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-[#EB4C36]/10 hover:bg-[#EB4C36]/20 text-[#EB4C36] text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Reza
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Junior CS */}
+                        <div className="mb-3">
+                            <p className="text-xs font-medium text-slate-500 mb-2">Junior CS</p>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('siti@vastel.co.id', 'junior123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Siti
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('agus@vastel.co.id', 'junior123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Agus
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('putri@vastel.co.id', 'junior123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Putri
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* IT Support */}
+                        <div className="mb-3">
+                            <p className="text-xs font-medium text-slate-500 mb-2">IT Support</p>
+                            <div className="grid grid-cols-2 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('bambang@vastel.co.id', 'it123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Bambang
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => quickLogin('eko@vastel.co.id', 'it123')}
+                                    disabled={isLoading}
+                                    className="px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Eko
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Admin */}
+                        <div>
+                            <p className="text-xs font-medium text-slate-500 mb-2">Admin</p>
+                            <button
+                                type="button"
+                                onClick={() => quickLogin('samuel@vastel.co.id', 'admin123')}
+                                disabled={isLoading}
+                                className="w-full px-3 py-2 bg-slate-800/10 hover:bg-slate-800/20 text-slate-800 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                Samuel
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Footer */}
